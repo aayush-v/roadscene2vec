@@ -17,6 +17,7 @@ class RealPreprocessor(prepproc):
     def __init__(self,config):
         super(RealPreprocessor, self).__init__(config) 
         self.dataset = ds.RawImageDataset(self.conf)
+        print("Initalized RealPreprocessor")
         
     '''Extract scene data using raw images of each frame.'''
     def load(self):
@@ -25,7 +26,11 @@ class RealPreprocessor(prepproc):
         all_sequence_dirs = [x for x in Path(self.dataset.dataset_path).iterdir() if x.is_dir()]
         all_sequence_dirs = sorted(all_sequence_dirs, key=lambda x: int(x.stem.split('_')[0]))  
         self.dataset.folder_names = [path.stem for path in all_sequence_dirs]
+        
+        print("Loaded subdirectories")
+        
         for path in tqdm(all_sequence_dirs):
+            print("Loading sequence: ", path.stem)
 
             seq = int(path.stem.split('_')[0])
             label_path = (path/"label.txt").resolve()
