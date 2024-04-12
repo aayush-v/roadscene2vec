@@ -7,6 +7,7 @@ from util.config_parser import configuration
 
 '''This script runs pre-processing of Real data'''
 def preprocess_data():
+    
     data_config = configuration(sys.argv[1:])
     if data_config.dataset_type == "image":
         img_preproc = ip.RealPreprocessor(data_config)

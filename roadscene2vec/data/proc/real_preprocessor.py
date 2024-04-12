@@ -53,7 +53,7 @@ class RealPreprocessor(prepproc):
 
     '''Represent each frame in sequence in terms of a tensor'''               
     def _load_images(self, path):
-        raw_images_loc = (path/'raw_images').resolve()
+        raw_images_loc = (path).resolve()
         images = sorted([Path(f) for f in listdir(raw_images_loc) if isfile(join(raw_images_loc, f)) and ".DS_Store" not in f and "Thumbs" not in f], key = lambda x: int(x.stem.split(".")[0]))
         images = [join(raw_images_loc,i) for i in images] 
 
