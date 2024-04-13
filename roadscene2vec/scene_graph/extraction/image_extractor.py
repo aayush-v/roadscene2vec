@@ -37,7 +37,8 @@ class RealExtractor(ex):
         self.predictor = DefaultPredictor(self.cfg)
 
         # bev setup
-        self.bev = bev.BEV(config.image_settings['BEV_PATH'], mode='deploy')
+        # self.bev = bev.BEV(config.image_settings['BEV_PATH'], mode='deploy')
+        self.bev = None
 
 
     '''Load scenegraphs using raw image frame tensors'''

@@ -1,8 +1,8 @@
 ---
 dataset_type: 'image' #Type of data from which to extract scenegraphs from. Options: 'image', 'carla'
 location_data:
-    input_path: 'use_case_data/lanechange' #REPLACE WITH PATH TO DOWNLOADED DATASET. input path to main directory containing driving sequence subdirectories from which to extract scenegraphs
-    data_save_path: 'use_case_1_sg_extraction_output.pkl' #path to save extracted scenegraph dataset
+    input_path: '../dataset/0' #REPLACE WITH PATH TO DOWNLOADED DATASET. input path to main directory containing driving sequence subdirectories from which to extract scenegraphs
+    data_save_path: '../pickle_dump/temp.pkl' #path to save extracted scenegraph dataset
 
 relation_extraction_settings:
   frames_limit: null #extract scenegraphs for 1 frame every n frames per sequence subdirectory. currently only functional for image based extraction. Options: null(None), Integer n
@@ -29,5 +29,5 @@ relation_extraction_settings:
   LANE_NAMES: []
 
 
-image_settings: #path to bev calibration data. only for use with real image scenegraph extraction
-    BEV_PATH: 'use_case_data/bev.json'
+# image_settings: #path to bev calibration data. only for use with real image scenegraph extraction
+#     BEV_PATH: 'use_case_data/bev.json'
