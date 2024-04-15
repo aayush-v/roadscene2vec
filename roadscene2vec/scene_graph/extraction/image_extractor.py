@@ -7,7 +7,7 @@ from os.path import isfile, join
 import roadscene2vec.data.dataset as ds
 from roadscene2vec.scene_graph.extraction.extractor import Extractor as ex
 from roadscene2vec.scene_graph.scene_graph import SceneGraph
-
+ex
 from detectron2.engine import DefaultPredictor
 from detectron2.data import MetadataCatalog
 from detectron2.utils import visualizer 
@@ -37,8 +37,8 @@ class RealExtractor(ex):
         self.predictor = DefaultPredictor(self.cfg)
 
         # bev setup
-        # self.bev = bev.BEV(config.image_settings['BEV_PATH'], mode='deploy')
-        self.bev = None
+        self.bev = bev.BEV(config.image_settings['BEV_PATH'], mode='deploy')
+        # self.bev = None
 
 
     '''Load scenegraphs using raw image frame tensors'''

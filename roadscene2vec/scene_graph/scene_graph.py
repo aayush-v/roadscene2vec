@@ -8,6 +8,7 @@ import pandas as pd
 import torch
 import math
 from collections import defaultdict
+import json
 
 '''Create scenegraph using raw Carla json frame data or raw image data'''
 class SceneGraph:
@@ -111,6 +112,16 @@ class SceneGraph:
 
     def add_node(self, node):
         '''Add a single node to graph. node can be any hashable datatype including objects'''
+        
+        # from pprint import pprint
+
+        # print("\n\n\n")
+        # print("Node Name: ", node.name)
+        # pprint("Node attribute: ", node.attr)
+        # print("Entire Node: ", node)
+        # print("\n\n\n")
+
+
         color = 'white'
         if 'ego' in node.name.lower():
             color = 'red'
@@ -118,7 +129,15 @@ class SceneGraph:
             color = 'green'
         elif 'lane' in node.name.lower():
             color = 'yellow'
-        self.g.add_node(node, attr=node.attr, label=node.name, style='filled', fillcolor=color)
+
+        """
+            This was the original code but I was unable to resolve the issue.
+            The issue is node.attr is a dictionary but add_node produces some error in doing so.
+        """
+        # self.g.add_node(node, attr_dict = node.attr , label=node.name, style='filled', fillcolor=color)
+
+        # Modified code that still produces a scene graph
+        self.g.add_node(node , label=node.name, style='filled', fillcolor=color)
 
 
 # add all pair-wise relations between two nodes

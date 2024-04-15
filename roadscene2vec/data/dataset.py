@@ -21,13 +21,6 @@ class BaseDataset(ABC):
     # dataset_path / <sg_dataset_path>.pkl
     '''
     def __init__(self, config):
-        print("Config passed for saving data: ", config)
-        print()
-
-        print("Path for saving data: ", config.location_data['data_save_path'])
-        print()
-
-        print("Input path: ", config.location_data['input_path'])
         self.dataset_path = config.location_data["input_path"]
         self.config = config
         self.data = None
