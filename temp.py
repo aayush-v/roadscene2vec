@@ -1,10 +1,10 @@
 import pickle
-with open('./pickle_dump/temp.pkl', 'rb') as file:
+with open('../pickle_dump/temp.pkl', 'rb') as file:
     data = pickle.load(file)
 
 from util.config_parser import configuration
 
-scenegraph_extraction_config = configuration(r"/data/courses/2024/class_cse59836295spring2024_rsenana1/group2/sameep/roadscene2vec/examples/use_case_1_scenegraph_extraction_config.yaml",from_function = True) #create scenegraph extraction config object
+scenegraph_extraction_config = configuration(r"/home/malav312/Desktop/Academics@ASU/CSE598_ODL/Graph_VQA_Implementation/roadscene2vec/examples/use_case_1_scenegraph_extraction_config.yaml",from_function = True) #create scenegraph extraction config object
 
 import os
 from io import BytesIO
