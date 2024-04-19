@@ -37,11 +37,12 @@ def bev_demo(bev, clip_path):
         for frame in frames:
             print(frame)
             img = cv2.imread(str(frame), cv2.IMREAD_UNCHANGED)
+            print(img.shape)
             assert (bev.params['height'], bev.params['width']) == img.shape[:-1]
             
             # images
             img = cv2.copyMakeBorder(img, bev.params['cropped_height'], 0, 0, 0, cv2.BORDER_CONSTANT)
-            warped_img = cv2.warpPerspective(img, M, (bev.params['width'], bev.params['height']+bev.params['cropped_height'])) # Image warping
+            warped_img = cv2.warpPerspective(img, bev.M, (bev.params['width'], bev.params['height']+bev.params['cropped_height'])) # Image warping
             merge_imgs = np.hstack((img, warped_img))
             
             # horizon line
@@ -59,6 +60,6 @@ def bev_demo(bev, clip_path):
             counter +=1
 
 if __name__ == "__main__":
-    clip_path = "./honda"
+    clip_path = "/data/courses/2024/class_cse59836295spring2024_rsenana1/group2/aayush/roadscene2vec/dataset"
     bev = BEV('bev.json', mode='deploy')
     bev_demo(bev, clip_path)

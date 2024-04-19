@@ -1,6 +1,8 @@
 import sys
 from pathlib import Path
 sys.path.append(str(Path("../../")))
+sys.path.append('/data/courses/2024/class_cse59836295spring2024_rsenana1/group2/aayush/roadscene2vec')
+print(sys.path)
 #from roadscene2vec.scene_graph.nodes import ObjectNode
 from roadscene2vec.scene_graph.extraction.extractor import Extractor as ex
 from roadscene2vec.scene_graph.scene_graph import SceneGraph
