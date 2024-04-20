@@ -43,7 +43,7 @@ class RealExtractor(ex):
 
 
     '''Load scenegraphs using raw image frame tensors'''
-    def load(self): #seq_tensors[seq][frame/jpgname] = frame tensor
+    def load(self, existing_scene_graph={}): #seq_tensors[seq][frame/jpgname] = frame tensor
         try:
             all_sequence_dirs = [x for x in Path(self.input_path).iterdir() if x.is_dir()]
             print(all_sequence_dirs)
@@ -77,10 +77,8 @@ class RealExtractor(ex):
                     # scenegraph.visualize('/data/courses/2024/class_cse59836295spring2024_rsenana1/group2/aayush/roadscene2vec/scenegraph2.png')
 
                     scene_graph_path = '/data/courses/2024/class_cse59836295spring2024_rsenana1/group2/aayush/roadscene2vec/scenegraph_GraphVQA/Scene_graphs.json'
-                    with open(scene_graph_path, 'w') as f:
-                        json.dump({}, f)  
                     
-                    scenegraph.create_json_scene_graph(scene_graph_path, f"{seq}_{frame}", img.shape)
+                    existing_scene_graph = scenegraph.create_json_scene_graph(scene_graph_path, f"{seq}_{frame}", img.shape, existing_scene_graph)
                     # print(scenegraph.g.nodes)
                     # # print(scenegraph.g.adj)
                     # print('first oe', list(scenegraph.g.nodes(0)._nodes)[5])
@@ -101,6 +99,8 @@ class RealExtractor(ex):
             print('We have problem creating the real image scenegraphs')
             print(e)
             traceback.print_exc()
+
+        return existing_scene_graph
     
     #returns a numpy array representation of a sequence of images in format (H,W,C)
     def load_images(self, path):

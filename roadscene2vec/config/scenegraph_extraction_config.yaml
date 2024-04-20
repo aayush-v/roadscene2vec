@@ -1,8 +1,8 @@
 ---
 dataset_type: 'image' #Type of data from which to extract scenegraphs from. Options: 'image', 'carla'
 location_data:
-    input_path: '/data/courses/2024/class_cse59836295spring2024_rsenana1/group2/aayush/roadscene2vec/dataset' #REPLACE WITH PATH TO DOWNLOADED DATASET. input path to main directory containing driving sequence subdirectories from which to extract scenegraphs
-    # input_path: '/data/courses/2024/class_cse59836295spring2024_rsenana1/group2/aayush/roadscene2vec/examples/tmp'
+    # input_path: '/data/courses/2024/class_cse59836295spring2024_rsenana1/group2/aayush/roadscene2vec/dataset' #REPLACE WITH PATH TO DOWNLOADED DATASET. input path to main directory containing driving sequence subdirectories from which to extract scenegraphs
+    input_path: '/data/courses/2024/class_cse59836295spring2024_rsenana1/group2/aayush/roadscene2vec/frames'
     data_save_path: '/data/courses/2024/class_cse59836295spring2024_rsenana1/group2/aayush/roadscene2vec/pickle_dump/temp2.pkl' #path to save extracted scenegraph dataset
 
 relation_extraction_settings:

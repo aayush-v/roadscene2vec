@@ -95,7 +95,7 @@ class SceneGraph:
             # due to bev warp, vehicles far from horizon get warped behind car, thus we will default them as far from vehcile
             if attr['location_y'] > self.egoNode.attr['location_y']:
                 # should store this in a list dictating the filename of the scene
-                print('BEV warped to behind vehicle')
+                # print('BEV warped to behind vehicle')
                 attr['location_y'] = self.egoNode.attr['location_y'] - self.relation_extractor.proximity_rels[-1][1] #assuming the last proximity threshold will be the most vague
 
             attr['rel_location_x'] = attr['location_x'] - self.egoNode.attr['location_x']           # x position relative to ego (neg left, pos right)
@@ -310,7 +310,7 @@ class SceneGraph:
     
     #==================================================================
     
-    def create_json_scene_graph(self, path, frame_id="123", img_shape=(1280, 720, 3)):
+    def create_json_scene_graph(self, path, frame_id="123", img_shape=(1280, 720, 3), existing_scene_graph = {}):
         pass
         
         scene_graph_object = {}
@@ -362,13 +362,14 @@ class SceneGraph:
 
         # print(scene_graph_object)
 
-        try:
-            with open(path, 'r') as f:
-                existing_scene_graph = json.load(f)
-        except FileNotFoundError:
-            existing_scene_graph = {}
+        # try:
+        #     with open(path, 'r') as f:
+        #         existing_scene_graph = json.load(f)
+        # except FileNotFoundError:
+        #     existing_scene_graph = {}
 
         existing_scene_graph.update(scene_graph_object)
 
-        with open(path, 'w') as f:
-            json.dump(existing_scene_graph, f,indent=4)
+        return existing_scene_graph
+        # with open(path, 'w') as f:
+        #     json.dump(existing_scene_graph, f,indent=4)
