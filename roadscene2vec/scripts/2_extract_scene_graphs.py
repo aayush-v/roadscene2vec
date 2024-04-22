@@ -30,7 +30,7 @@ def extract_scene_graphs(f):
         
     
 if __name__ == "__main__":
-    scene_graph_path = '/data/courses/2024/class_cse59836295spring2024_rsenana1/group2/aayush/roadscene2vec/scenegraph_GraphVQA/Scene_graphs_indent.json'
-    f = open(scene_graph_path, 'w')
-
+    # scene_graph_path = '/data/courses/2024/class_cse59836295spring2024_rsenana1/group2/aayush/roadscene2vec/scenegraph_GraphVQA/Scene_graphs_indent.json'
+    # f = open(scene_graph_path, 'w')
+    f = ''
     extract_scene_graphs(f)

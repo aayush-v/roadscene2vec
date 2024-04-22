@@ -16,6 +16,7 @@ from detectron2 import model_zoo
 from roadscene2vec.scene_graph.extraction.bev import bev
 from tqdm import tqdm
 import json
+import os
 
 '''RealExtractor initializes relational settings and creates an ImageSceneGraphSequenceGenerator object to extract scene graphs using raw image data.'''
 class RealExtractor(ex):
@@ -46,7 +47,7 @@ class RealExtractor(ex):
     def load(self, existing_scene_graph={}): #seq_tensors[seq][frame/jpgname] = frame tensor
         try:
             all_sequence_dirs = [x for x in Path(self.input_path).iterdir() if x.is_dir()]
-            print(all_sequence_dirs)
+            # print(all_sequence_dirs)
             all_sequence_dirs = sorted(all_sequence_dirs)  
             self.dataset.folder_names = [path.stem for path in all_sequence_dirs]
             for path in tqdm(all_sequence_dirs):
@@ -63,8 +64,8 @@ class RealExtractor(ex):
             
                 self.dataset.scene_graphs[seq] = {}
                 for frame, img in seq_images.items():
-                    # out_img_path = '/data/courses/2024/class_cse59836295spring2024_rsenana1/group2/aayush/roadscene2vec/output2.png'
-                    out_img_path = ''
+                    out_img_path = '/data/courses/2024/class_cse59836295spring2024_rsenana1/group2/aayush/roadscene2vec/output2.png'
+                    out_img_path = None
 
                     bounding_boxes = self.get_bounding_boxes(img_tensor=img, out_img_path=out_img_path)
                     
@@ -74,11 +75,15 @@ class RealExtractor(ex):
                                                 coco_class_names=self.coco_class_names, 
                                                 platform=self.dataset_type)
 
-                    # scenegraph.visualize('/data/courses/2024/class_cse59836295spring2024_rsenana1/group2/aayush/roadscene2vec/scenegraph2.png')
 
+                    visualize_dir = f"/data/courses/2024/class_cse59836295spring2024_rsenana1/group2/aayush/roadscene2vec/scenegraph_GraphVQA/sg/{seq}"
+                    os.makedirs(visualize_dir, exist_ok=True)
+                    
+                    scenegraph.visualize(f"{visualize_dir}/{frame}.png")
+                    
                     scene_graph_path = '/data/courses/2024/class_cse59836295spring2024_rsenana1/group2/aayush/roadscene2vec/scenegraph_GraphVQA/Scene_graphs.json'
                     
-                    existing_scene_graph = scenegraph.create_json_scene_graph(scene_graph_path, f"{seq}_{frame}", img.shape, existing_scene_graph)
+                    # existing_scene_graph = scenegraph.create_json_scene_graph(scene_graph_path, f"{seq}_{frame}", img.shape, existing_scene_graph)
                     # print(scenegraph.g.nodes)
                     # # print(scenegraph.g.adj)
                     # print('first oe', list(scenegraph.g.nodes(0)._nodes)[5])

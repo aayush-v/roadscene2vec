@@ -83,6 +83,14 @@ class SceneGraph:
             if actor_type == "": #if actor's type not included in ACTOR_NAMES
                 continue
 
+            h = attr['bottom']-attr['top']
+            w = attr['right']-attr['left']
+
+            area = h * w
+
+            if actor_type == 'car' and area < 500:
+                continue
+            
             # map center-bottom of bounding box to warped image
             x_mid = (attr['right'] + attr['left']) / 2
             y_bottom = attr['bottom']
@@ -202,7 +210,7 @@ class SceneGraph:
         
 
     def visualize(self, filename=None):
-        print('vis----\n\n')
+        # print('vis----\n\n')
         A = nx_pydot.to_pydot(self.g)
         A.write_png(filename)
 

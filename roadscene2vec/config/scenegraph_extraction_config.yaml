@@ -12,17 +12,17 @@ relation_extraction_settings:
   
   #actor types specified in proximity_relation_list, directional_relation_list must first be defined in ACTOR_NAMES
   #relations specified in PROXIMITY_THRESHOLDS, DIRECTIONAL_THRESHOLDS, RELATION_COLORS must first be defined in RELATION_NAMES
-  PROXIMITY_THRESHOLDS: [['near_coll',2],['super_near',4],['very_near',6],['near',10],['visible',16]] #define proximity relations in the format [relation, distance (ft)] in decreasing order of closeness
+  PROXIMITY_THRESHOLDS: [['near_coll',1],['super_near',2],['very_near',4],['near',6],['visible',10]] #define proximity relations in the format [relation, distance (ft)] in decreasing order of closeness
   LANE_THRESHOLD: 6 #feet. if object's center is more than this distance away from ego's center, build left or right lane relation. otherwise build middle lane relation
-  DIRECTIONAL_THRESHOLDS: [['isIn',[[0,0]]], ['inDFrontOf',[[45,90],[90,135]]], ['inSFrontOf',[[0,45],[135,180]]], ['atDRearOf',[[225,270],[270,315]]], ['atSRearOf',[[180,225],[315,360]]]] #Leftof and Rightof assumed to always be direction relations. additonal directional relations can be specified in the form [[relation], [[1st range of degrees], [2nd range of degrees], ..]]
-  RELATION_COLORS: [['isIn','b lack'],['near_coll','red'], ['super_near','orange'], ['very_near','yellow'], ['near','purple'], ['visible','green'], ['inDFrontOf','violet'], ['inSFrontOf','violet'], ['atDRearOf','turquoise'], ['atSRearOf','turquoise'], ['toLeftOf','blue'], ['toRightOf','blue']] #define relational edge colors for scenegraph visualization purposes in the format [relation, edge_color]
-  proximity_relation_list: [['car','road',16], ['ego_car', 'car',16],  ['car', 'car',16],  ['ped', 'car',16],  ['moto', 'car',16], ['ped', 'moto',16]] #[[ACTORTYPE1, ACTORTYPE2, max proximity distance before relations are not extracted]]
-  directional_relation_list: [['car','road',16], ['ego_car', 'car',16],  ['car', 'car',16],  ['ped', 'car',16],  ['moto', 'car',16], ['ped', 'moto',16]] #[[ACTORTYPE1, ACTORTYPE2, max proximity distance before relations are not extracted]] 
+  DIRECTIONAL_THRESHOLDS: [['isIn',[[0,0]]], ['inDFrontOf',[[45,89],[90,134]]], ['inSFrontOf',[[0,44],[135,179]]], ['atDRearOf',[[225,269],[270,314]]], ['atSRearOf',[[180,224],[315,359]]]] #Leftof and Rightof assumed to always be direction relations. additonal directional relations can be specified in the form [[relation], [[1st range of degrees], [2nd range of degrees], ..]]
+  RELATION_COLORS: [['isIn','black'],['near_coll','red'], ['super_near','orange'], ['very_near','yellow'], ['near','purple'], ['visible','green'], ['inDFrontOf','violet'], ['inSFrontOf','violet'], ['atDRearOf','turquoise'], ['atSRearOf','turquoise'], ['toLeftOf','blue'], ['toRightOf','blue']] #define relational edge colors for scenegraph visualization purposes in the format [relation, edge_color]
+  proximity_relation_list: [['car','road',10], ['ego_car', 'car',10],  ['car', 'car',10],  ['ped', 'car',10],  ['moto', 'car',10], ['ped', 'moto',10]] #[[ACTORTYPE1, ACTORTYPE2, max proximity distance before relations are not extracted]]
+  directional_relation_list: [['car','road',10], ['ego_car', 'car',10],  ['car', 'car',10],  ['ped', 'car',10],  ['moto', 'car',10], ['ped', 'moto',10]] #[[ACTORTYPE1, ACTORTYPE2, max proximity distance before relations are not extracted]] 
   
   #every type of actor in ACTOR_NAMES can have a list of synonymous names found in the object detection data. for a given ACTOR_NAMES array, all types of objects within the array are treated as objects of type ACTOR.
-  MOTO_NAMES: ["moto","Harley-Davidson", "Kawasaki", "Yamaha"]
+  MOTO_NAMES: ["moto","Harley-Davidson", "Kawasaki", "Yamaha", "motorcycle"]
   BICYCLE_NAMES: ["bicycle","Gazelle", "Diamondback", "Bh"]
-  CAR_NAMES: ["car","TRUCK","BUS","Ford", "Bmw", "Toyota", "Nissan", "Mini", "Tesla", "Seat", "Lincoln", "Audi", "Carlamotors", "Citroen", "Mercedes-Benz", "Chevrolet", "Volkswagen", "Jeep", "Nissan", "Dodge", "Mustang"]
+  CAR_NAMES: ["car", "truck", "TRUCK","BUS","Ford", "Bmw", "Toyota", "Nissan", "Mini", "Tesla", "Seat", "Lincoln", "Audi", "Carlamotors", "Citroen", "Mercedes-Benz", "Chevrolet", "Volkswagen", "Jeep", "Nissan", "Dodge", "Mustang"]
   SIGN_NAMES: ["sign"]
   LIGHT_NAMES: ["light"]
   PED_NAMES: ["person","pedestrian"]
