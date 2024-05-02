@@ -232,7 +232,7 @@ class BEV():
 
 if __name__ == '__main__':
     ap = ArgumentParser(description='The parameters for training.')
-    ap.add_argument('--cal_im_path', type=str, default='/media/NAS-temp/louisccc/av/synthesis_data/1043_carla/22_lanechange/raw_images/00097095.jpg', help="The path defining location of image used to calibrate BEV.")
+    ap.add_argument('--cal_im_path', type=str, default='/data/courses/2024/class_cse59836295spring2024_rsenana1/group2/aayush/roadscene2vec/dataset/0/raw_images/2_seq/1.png', help="The path defining location of image used to calibrate BEV.")
     path = ap.parse_args().cal_im_path
     bev = BEV(path, mode='calibrate')
     bev.calibrate()

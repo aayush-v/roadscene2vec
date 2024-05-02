@@ -1,9 +1,9 @@
 {
-    "proj_ratio": 53,
+    "proj_ratio": 7,
     "height": 720,
     "width": 1280,
-    "cropped_height": 396,
+    "cropped_height": 172,
     "horizon_height": 720,
-    "yscale": 0.528,
-    "xscale": 0.537
+    "yscale": 0.071,
+    "xscale": 1.822
 }

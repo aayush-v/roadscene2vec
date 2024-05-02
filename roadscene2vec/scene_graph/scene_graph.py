@@ -9,6 +9,7 @@ import torch
 import math
 from collections import defaultdict
 import json
+import random
 
 '''Create scenegraph using raw Carla json frame data or raw image data'''
 class SceneGraph:
@@ -54,19 +55,19 @@ class SceneGraph:
             self.relation_extractor.extract_relative_lanes(self) 
     
             # convert bounding boxes to nodes and build relations.
-            boxes, labels, image_size = bounding_boxes
-            self.get_nodes_from_bboxes(bev, boxes, labels, coco_class_names)
+            boxes, labels, image_size, scores = bounding_boxes
+            self.get_nodes_from_bboxes(bev, boxes, labels, coco_class_names, scores)
             self.relation_extractor.extract_semantic_relations(self)
 
 
-    def get_nodes_from_bboxes(self, bev, boxes, labels, coco_class_names):
+    def get_nodes_from_bboxes(self, bev, boxes, labels, coco_class_names, scores):
         for idx, (box, label) in enumerate(zip(boxes, labels)):
             box = box.cpu().numpy().tolist()
             class_name = coco_class_names[label]
             attr = {'left': box[0], 'top': box[1], 'right': box[2], 'bottom': box[3]}
             
             # exclude vehicle dashboard
-            if attr['top'] >= bev.params['height'] - 100: continue;
+            # if attr['top'] >= bev.params['height'] - 100: continue;
             
 
             # filter traffic participants
@@ -82,6 +83,14 @@ class SceneGraph:
             if actor_type == "": #if actor's type not included in ACTOR_NAMES
                 continue
 
+            h = attr['bottom']-attr['top']
+            w = attr['right']-attr['left']
+
+            area = h * w
+
+            if actor_type == 'car' and area < 500:
+                continue
+            
             # map center-bottom of bounding box to warped image
             x_mid = (attr['right'] + attr['left']) / 2
             y_bottom = attr['bottom']
@@ -94,14 +103,17 @@ class SceneGraph:
             # due to bev warp, vehicles far from horizon get warped behind car, thus we will default them as far from vehcile
             if attr['location_y'] > self.egoNode.attr['location_y']:
                 # should store this in a list dictating the filename of the scene
-                print('BEV warped to behind vehicle')
+                # print('BEV warped to behind vehicle')
                 attr['location_y'] = self.egoNode.attr['location_y'] - self.relation_extractor.proximity_rels[-1][1] #assuming the last proximity threshold will be the most vague
 
             attr['rel_location_x'] = attr['location_x'] - self.egoNode.attr['location_x']           # x position relative to ego (neg left, pos right)
             attr['rel_location_y'] = attr['location_y'] - self.egoNode.attr['location_y']           # y position relative to ego (neg vehicle ahead of ego)
             attr['distance_abs'] = math.sqrt(attr['rel_location_x']**2 + attr['rel_location_y']**2) # absolute distance from ego
             #import pdb; pdb.set_trace()
-            node = Node('%s_%d' % (actor_type, idx), attr, actor_type, actor_value)
+            i = (scores[idx].cpu().numpy().tolist())*1000
+            # print(i)
+
+            node = Node('%s_%d' % (actor_type, i), attr, actor_type, actor_value)
             
             # add vehicle to graph
             self.add_node(node) #change
@@ -134,10 +146,10 @@ class SceneGraph:
             This was the original code but I was unable to resolve the issue.
             The issue is node.attr is a dictionary but add_node produces some error in doing so.
         """
-        # self.g.add_node(node, attr_dict = node.attr , label=node.name, style='filled', fillcolor=color)
+        self.g.add_node(node, attr_dict = node.attr , label=node.name, style='filled', fillcolor=color)
 
         # Modified code that still produces a scene graph
-        self.g.add_node(node , label=node.name, style='filled', fillcolor=color)
+        # self.g.add_node(node , label=node.name, style='filled', fillcolor=color)
 
 
 # add all pair-wise relations between two nodes
@@ -198,6 +210,7 @@ class SceneGraph:
         
 
     def visualize(self, filename=None):
+        # print('vis----\n\n')
         A = nx_pydot.to_pydot(self.g)
         A.write_png(filename)
 
@@ -305,4 +318,66 @@ class SceneGraph:
     
     #==================================================================
     
-    
+    def create_json_scene_graph(self, path, frame_id="123", img_shape=(1280, 720, 3), existing_scene_graph = {}):
+        pass
+        
+        scene_graph_object = {}
+        scene_graph_object[frame_id] = {
+            "width": img_shape[1],
+            "height": img_shape[0],
+            "objects": {}
+
+        }
+        sg = self.g
+        # print(sg)
+
+        # map nodes to random int
+        node_to_id = {}
+        acceptedId = []
+        randomIdx = random.sample(range(1, 10000), len(list(sg.nodes)))
+        # print(randomIdx)
+
+        for idx, node in enumerate(sg.nodes._nodes):
+            node_to_id[node] = randomIdx[idx]
+            node_data = list(sg.nodes.data())[idx]
+            if "left" not in node_data[1]['attr_dict']:
+                continue
+
+            h = node_data[1]['attr_dict']['bottom'] - node_data[1]['attr_dict']['top']
+            w = node_data[1]['attr_dict']['right'] - node_data[1]['attr_dict']['left']
+            scene_graph_object[frame_id]["objects"][node_to_id[node]] = {
+                "name": str(node_data[0]).split('_')[0],
+                "x": node_data[1]['attr_dict']['left'],
+                "y": node_data[1]['attr_dict']['top'],
+                "h": h,
+                "w": w,
+                "attributes": [node_data[1]['attr_dict']['distance_abs'], h*w],
+                "relations": []
+            }
+            acceptedId.append(node_to_id[node])
+
+        # print(len(scene_graph_object[frame_id]["objects"]))
+        
+        for idx, edges in enumerate(sg.edges.data()):
+            if (node_to_id[edges[0]] not in acceptedId or node_to_id[edges[1]] not in acceptedId):
+                continue
+
+            # print(edges)
+            scene_graph_object[frame_id]["objects"][node_to_id[edges[0]]]["relations"].append({
+                "object": str(node_to_id[edges[1]]),
+                "name": str(edges[2]['label'])
+            })
+
+        # print(scene_graph_object)
+
+        # try:
+        #     with open(path, 'r') as f:
+        #         existing_scene_graph = json.load(f)
+        # except FileNotFoundError:
+        #     existing_scene_graph = {}
+
+        existing_scene_graph.update(scene_graph_object)
+
+        return existing_scene_graph
+        # with open(path, 'w') as f:
+        #     json.dump(existing_scene_graph, f,indent=4)

@@ -15,6 +15,8 @@ from detectron2.config import get_cfg
 from detectron2 import model_zoo
 from roadscene2vec.scene_graph.extraction.bev import bev
 from tqdm import tqdm
+import json
+import os
 
 '''RealExtractor initializes relational settings and creates an ImageSceneGraphSequenceGenerator object to extract scene graphs using raw image data.'''
 class RealExtractor(ex):
@@ -42,10 +44,11 @@ class RealExtractor(ex):
 
 
     '''Load scenegraphs using raw image frame tensors'''
-    def load(self): #seq_tensors[seq][frame/jpgname] = frame tensor
+    def load(self, existing_scene_graph={}): #seq_tensors[seq][frame/jpgname] = frame tensor
         try:
             all_sequence_dirs = [x for x in Path(self.input_path).iterdir() if x.is_dir()]
-            all_sequence_dirs = sorted(all_sequence_dirs, key=lambda x: int(x.stem.split('_')[0]))  
+            # print(all_sequence_dirs)
+            all_sequence_dirs = sorted(all_sequence_dirs)  
             self.dataset.folder_names = [path.stem for path in all_sequence_dirs]
             for path in tqdm(all_sequence_dirs):
                 seq = int(path.stem.split('_')[0])
@@ -61,7 +64,9 @@ class RealExtractor(ex):
             
                 self.dataset.scene_graphs[seq] = {}
                 for frame, img in seq_images.items():
+                    out_img_path = '/data/courses/2024/class_cse59836295spring2024_rsenana1/group2/aayush/roadscene2vec/output2.png'
                     out_img_path = None
+
                     bounding_boxes = self.get_bounding_boxes(img_tensor=img, out_img_path=out_img_path)
                     
                     scenegraph = SceneGraph(self.relation_extractor,    
@@ -70,6 +75,21 @@ class RealExtractor(ex):
                                                 coco_class_names=self.coco_class_names, 
                                                 platform=self.dataset_type)
 
+
+                    visualize_dir = f"/data/courses/2024/class_cse59836295spring2024_rsenana1/group2/aayush/roadscene2vec/scenegraph_GraphVQA/sg/{seq}"
+                    os.makedirs(visualize_dir, exist_ok=True)
+                    
+                    scenegraph.visualize(f"{visualize_dir}/{frame}.png")
+                    
+                    scene_graph_path = '/data/courses/2024/class_cse59836295spring2024_rsenana1/group2/aayush/roadscene2vec/scenegraph_GraphVQA/Scene_graphs.json'
+                    
+                    # existing_scene_graph = scenegraph.create_json_scene_graph(scene_graph_path, f"{seq}_{frame}", img.shape, existing_scene_graph)
+                    # print(scenegraph.g.nodes)
+                    # # print(scenegraph.g.adj)
+                    # print('first oe', list(scenegraph.g.nodes(0)._nodes)[5])
+                    # print('edge', list(scenegraph.g.out_edges)[0])
+                    # list(scenegraph.g.adj._atlas.values())
+                    
                     self.dataset.scene_graphs[seq][frame] = scenegraph
                 self.dataset.action_types[seq] = "lanechange" 
                 if label_path.exists():
@@ -84,11 +104,13 @@ class RealExtractor(ex):
             print('We have problem creating the real image scenegraphs')
             print(e)
             traceback.print_exc()
+
+        return existing_scene_graph
     
     #returns a numpy array representation of a sequence of images in format (H,W,C)
     def load_images(self, path):
-        raw_images_loc = (path/'raw_images').resolve()
-        images = sorted([Path(f) for f in os.listdir(raw_images_loc) if isfile(join(raw_images_loc, f)) and ".DS_Store" not in f and "Thumbs" not in f], key = lambda x: int(x.stem.split(".")[0]))
+        raw_images_loc = (path).resolve()
+        images = sorted([Path(f) for f in os.listdir(raw_images_loc) if isfile(join(raw_images_loc, f)) and ".DS_Store" not in f and "Thumbs" not in f])
         images = [join(raw_images_loc,i) for i in images] 
         sequence_tensor = {}
         modulo = 0
@@ -124,7 +146,7 @@ class RealExtractor(ex):
         # todo: after done scp to server
         # crop im to remove ego car's hood
         # find threshold then remove from pred_boxes, pred_classes, check image_size
-        bounding_boxes = outputs['instances'].pred_boxes, outputs['instances'].pred_classes, outputs['instances'].image_size
+        bounding_boxes = outputs['instances'].pred_boxes, outputs['instances'].pred_classes, outputs['instances'].image_size, outputs['instances'].scores
         return bounding_boxes
 
     
